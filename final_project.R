@@ -8,12 +8,20 @@ songs <- read.csv("/Users/Amanda/Library/CloudStorage/OneDrive-ChapmanUniversity
 songs %>% glimpse()
 songs %>% is.na %>% sum()
 
+# drop missing values
 songs_clean <- songs %>% drop_na() # drop 1169 rows with missing values
 songs_clean %>% is.na %>% sum()
-
 songs_clean %>% dim() # still have 19549 observations
 
+# drop variables that are irrelevant to our model
+songs_clean <- songs_clean %>% select(-c(Description, Url_spotify, Uri))
 summary(songs_clean)
+
+# factor binary variables
+songs_clean <- songs_clean %>% mutate(Licensed = factor(Licensed),
+                                      official_video = factor(official_video),
+                                      Album_type = factor(Album_type))
+songs_clean %>% glimpse()
 
 # correlation matrix of variables
 library(ggcorrplot)
@@ -29,16 +37,28 @@ ggcorrplot(cor_table)
 ## Views isn't strongly correlated to anything other tahn Likes, Comments, and Stream
 
 # data visualization
-(Danceability_Views <- ggplot(songs_clean, aes(x = Danceability, y = Views, color = Likes)) + 
+# Danceability vs Views
+ggplot(songs_clean, aes(x = Danceability, y = Views, color = Likes)) + 
   geom_point() + 
   labs(title = "Danceability vs Views") + 
-  theme_minimal())
+  theme_minimal()
 
-(Energy_Views <- ggplot(songs_clean, aes(x = Energy, y = Views, color = Likes)) + 
+# Energy vs Views
+ggplot(songs_clean, aes(x = Energy, y = Views, color = Likes)) + 
   geom_point() + 
   labs(title = "Energy vs Views") + 
-  theme_minimal())
+  theme_minimal()
 
+# distribution of views and likes
+ggplot(songs_clean, aes(x = Views)) + 
+  geom_histogram(bins = 20, fill = "light pink", color = "pink") + 
+  theme_minimal()
+
+ggplot(songs_clean, aes(x = Likes)) + 
+  geom_histogram(bins = 20, fill = "light pink", color = "pink") + 
+  theme_minimal()
+
+# distribution of different predictor variables
 ggplot(songs_clean, aes(x = Danceability)) + 
   geom_histogram(bins = 20, fill = "light pink", color = "pink") + 
   theme_minimal()
