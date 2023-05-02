@@ -15,13 +15,13 @@ songs_clean %>% dim() # still have 19549 observations
 
 # drop variables that are irrelevant to our model
 songs_clean <- songs_clean %>% select(-c(Description, Url_spotify, Uri))
-summary(songs_clean)
 
 # factor binary variables
 songs_clean <- songs_clean %>% mutate(Licensed = factor(Licensed),
                                       official_video = factor(official_video),
                                       Album_type = factor(Album_type))
 songs_clean %>% glimpse()
+songs_clean %>% summary()
 
 # correlation matrix of variables
 library(ggcorrplot)
