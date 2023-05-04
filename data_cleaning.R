@@ -19,7 +19,8 @@ songs_clean <- songs_clean %>% select(-c(Description, Url_spotify, Uri))
 # factor binary variables
 songs_clean <- songs_clean %>% mutate(Artist = factor(Artist),
                                       Licensed = as.logical(Licensed),
-                                      official_video = as.logical(official_video))
+                                      official_video = as.logical(official_video),
+                                      ViewsM = Views/1000000)
 
 songs_clean %>% glimpse()
 songs_clean %>% summary()
@@ -40,43 +41,62 @@ ggcorrplot(cor_table)
 ## Views isn't strongly correlated to anything other tahn Likes, Comments, and Stream
 
 # data visualization
-# Danceability vs Views
-ggplot(songs_clean, aes(x = Danceability, y = Views, color = Likes)) + 
-  geom_point() + 
-  labs(title = "Danceability vs Views") + 
-  theme_minimal()
 
-# Energy vs Views
-ggplot(songs_clean, aes(x = Energy, y = Views, color = Likes)) + 
-  geom_point() + 
-  labs(title = "Energy vs Views") + 
-  theme_minimal()
+ggplot(songs_clean, aes(x = "", y = Energy)) + geom_violin()
+
+ggplot(songs_clean, aes(x = Danceability)) + geom_histogram(fill = "#9a0331ff") + 
+  theme_minimal() + 
+  labs(y = "Observations", title = "Danceability")
+
+ggplot(songs_clean, aes(x = Loudness)) + geom_histogram(fill = "#9a0331ff") + 
+  theme_minimal() + 
+  labs(y = "Observations", title = "Loudness")
+
+ggplot(songs_clean, aes(x = Energy)) + geom_histogram(fill = "#9a0331ff") + 
+  theme_minimal() + 
+  labs(y = "Observations", title = "Energy")
+
+ggplot(songs_clean, aes(x = Speechiness)) + geom_histogram(fill = "#9a0331ff") + 
+  theme_minimal() + 
+  labs(y = "Observations", title = "Speechiness")
+
+# ggplot(songs_clean, aes(x = Danceability, y = Views, color = Likes)) + 
+#   geom_point() + 
+#   labs(title = "Danceability vs Views") + 
+#   theme_minimal()
+# 
+# # Energy vs Views
+# ggplot(songs_clean, aes(x = Energy, y = Views, color = Likes)) + 
+#   geom_point() + 
+#   labs(title = "Energy vs Views") + 
+#   theme_minimal()
 
 # distribution of views and likes
-ggplot(songs_clean, aes(x = Views)) + 
-  geom_histogram(bins = 20, fill = "light pink", color = "pink") + 
-  theme_minimal()
-
-ggplot(songs_clean, aes(x = Likes)) + 
-  geom_histogram(bins = 20, fill = "light pink", color = "pink") + 
-  theme_minimal()
-
-# distribution of different predictor variables
-ggplot(songs_clean, aes(x = Danceability)) + 
-  geom_histogram(bins = 20, fill = "light pink", color = "pink") + 
-  theme_minimal()
-
-ggplot(songs_clean, aes(x = Loudness)) + 
-  geom_histogram(bins = 20, fill = "light pink", color = "pink") + 
-  theme_minimal()
-
-ggplot(songs_clean, aes(x = Acousticness)) + 
-  geom_histogram(bins = 20, fill = "light pink", color = "pink") + 
-  theme_minimal()
-
-ggplot(songs_clean, aes(x = Energy)) + 
-  geom_histogram(bins = 20, fill = "light pink", color = "pink") + 
-  theme_minimal()
+ggplot(songs_clean, aes(x = ViewsM)) + 
+  geom_histogram(bins = 20, fill = "#9a0331ff", color = "#9a0331ff") + 
+  theme_minimal() + 
+  labs(x = "Views (Millions)", y = "Observations", title = "Distribution of Views")
+# 
+# ggplot(songs_clean, aes(x = Likes)) + 
+#   geom_histogram(bins = 20, fill = "light pink", color = "pink") + 
+#   theme_minimal()
+# 
+# # distribution of different predictor variables
+# ggplot(songs_clean, aes(x = Danceability)) + 
+#   geom_histogram(bins = 20, fill = "light pink", color = "pink") + 
+#   theme_minimal()
+# 
+# ggplot(songs_clean, aes(x = Loudness)) + 
+#   geom_histogram(bins = 20, fill = "light pink", color = "pink") + 
+#   theme_minimal()
+# 
+# ggplot(songs_clean, aes(x = Acousticness)) + 
+#   geom_histogram(bins = 20, fill = "light pink", color = "pink") + 
+#   theme_minimal()
+# 
+# ggplot(songs_clean, aes(x = Energy)) + 
+#   geom_histogram(bins = 20, fill = "light pink", color = "pink") + 
+#   theme_minimal()
 
 # me trying to figure out what the outlier is... it's despacito
 songs_popular <- songs_clean %>% arrange(-Views) %>% slice(1:50)
