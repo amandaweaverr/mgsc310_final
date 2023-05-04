@@ -20,18 +20,18 @@ dim(songs_split)
 # train linear model
 mod1 <- lm(Views ~ Danceability + Energy + Key + Loudness + Speechiness + 
                Acousticness + Instrumentalness + Liveness + Valence + Tempo + Duration_ms + 
-               Likes + Licensed + official_video,
+               Licensed + official_video,
              songs_train)
 
 summary(mod1)
 
-## Significant at a 0.001 level: Speechiness, Valence, Duration_ms, Likes, LicensedTRUE
-## At 0.01 level: None
-## At 0.05 level: Danceability
-## Not significant: Energy, Key, Acousticness, Instrumentalness, Liveness, Tempo, official_videoTRUE
+## Significant at a 0.001 level: Danceability Loudness LicensedTRUE
+## At 0.01 level: Energy
+## At 0.05 level: Speechiness official_videoTRUE
+## Not significant: Key Acousticness Instrumentalness Liveness valence Tempo Duration_ms
 
 # train new model with only significant variables
-mod2 <- lm(Views ~ Speechiness + Valence + Duration_ms + Likes + Licensed + Danceability,
+mod2 <- lm(Views ~ Danceability + Loudness + LicensedTRUE + Energy + Speechiness + official_videoTRUE,
            songs_train)
 
 summary(mod2)
