@@ -1,0 +1,56 @@
+library(tidyverse)
+library(rsample)
+library(randomForest)
+library(randomForestExplainer)
+library(ggplot2)
+library(caret)
+
+# import data
+songs <- read.csv("datasets/songs_clean.csv")
+
+# data cleaning and exploring
+songs %>% glimpse()
+songs %>% is.na %>% sum()
+
+# drop missing values
+songs_clean <- songs %>% drop_na() # drop 1169 rows with missing values
+songs_clean %>% is.na %>% sum()
+songs_clean %>% dim() # still have 19549 observations
+
+# factor binary variables
+songs_clean <- songs_clean %>% mutate(Artist = factor(Artist),
+                                      Licensed = as.logical(Licensed),
+                                      official_video = as.logical(official_video))
+
+songs_clean %>% glimpse()
+
+set.seed(310)
+songs_split <- initial_split(songs_clean, prop = 0.8)
+songs_train <- training(songs_split)
+songs_test <- testing(songs_split)
+
+
+# random forest model
+rf_songs <- randomForest(ViewsM ~ Danceability + Energy + Key + Loudness + Speechiness + 
+                           Acousticness + Instrumentalness + Liveness + Valence +
+                           Tempo + Duration_ms + Stream +
+                           Licensed + official_video,
+                         data = songs_train,
+                         importance = TRUE)
+
+print(rf_songs)
+plot(rf_songs)
+
+# performance of the model
+rf_train <- predict(rf_songs, newdata = songs_train)
+
+rf_test <- predict(rf_songs, newdata = songs_test)
+
+RMSE(rf_train, songs_train$ViewsM)
+RMSE(rf_test, songs_test$ViewsM)
+
+importance(rf_songs)
+
+
+
+explain_forest(rf_songs, interactions=TRUE, data=songs_train)
