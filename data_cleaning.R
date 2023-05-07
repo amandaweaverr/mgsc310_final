@@ -25,7 +25,7 @@ songs_clean <- songs_clean %>% mutate(Artist = factor(Artist),
 songs_clean %>% glimpse()
 songs_clean %>% summary()
 
-write.csv(songs_clean, "/Users/Amanda/Library/CloudStorage/OneDrive-ChapmanUniversity/junior/junior spring/mgsc 310/datasets/songs_clean.csv", row.names=FALSE)
+# write.csv(songs_clean, "/Users/Amanda/Library/CloudStorage/OneDrive-ChapmanUniversity/junior/junior spring/mgsc 310/datasets/songs_clean.csv", row.names=FALSE)
 
 # correlation matrix of variables
 library(ggcorrplot)
@@ -42,8 +42,6 @@ ggcorrplot(cor_table)
 
 # data visualization
 
-ggplot(songs_clean, aes(x = "", y = Energy)) + geom_violin()
-
 ggplot(songs_clean, aes(x = Danceability)) + geom_histogram(fill = "#9a0331ff") + 
   theme_minimal() + 
   labs(y = "Observations", title = "Danceability")
@@ -59,6 +57,14 @@ ggplot(songs_clean, aes(x = Energy)) + geom_histogram(fill = "#9a0331ff") +
 ggplot(songs_clean, aes(x = Speechiness)) + geom_histogram(fill = "#9a0331ff") + 
   theme_minimal() + 
   labs(y = "Observations", title = "Speechiness")
+
+ggplot(songs_clean, aes(x = Acousticness)) + geom_histogram(fill = "#9a0331ff") + 
+  theme_minimal() + 
+  labs(y = "Observations", title = "Acousticness")
+
+ggplot(songs_clean, aes(x = Duration_ms)) + geom_histogram(fill = "#9a0331ff") + 
+  theme_minimal() + 
+  labs(y = "Observations", x = "Duration (milliseconds)", title = "Duration (milliseconds)")
 
 # ggplot(songs_clean, aes(x = Danceability, y = Views, color = Likes)) + 
 #   geom_point() + 

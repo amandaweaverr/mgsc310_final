@@ -18,9 +18,9 @@ songs_test <- testing(songs_split)
 dim(songs_split)
 
 # train linear model
-mod1 <- lm(Views ~ Danceability + Energy + Key + Loudness + Speechiness + 
+mod1 <- lm(ViewsM ~ Danceability + Energy + Key + Loudness + Speechiness + 
                Acousticness + Instrumentalness + Liveness + Valence + Tempo + Duration_ms + 
-               Licensed + official_video,
+               Licensed + official_video + Stream,
              songs_train)
 
 summary(mod1)
@@ -31,7 +31,7 @@ summary(mod1)
 ## Not significant: Key Acousticness Instrumentalness Liveness valence Tempo Duration_ms
 
 # train new model with only significant variables
-mod2 <- lm(Views ~ Danceability + Loudness + LicensedTRUE + Energy + Speechiness + official_videoTRUE,
+mod2 <- lm(ViewsM ~ Danceability + Loudness + Acousticness + Valence + Duration_ms + Licensed + Stream,
            songs_train)
 
 summary(mod2)
