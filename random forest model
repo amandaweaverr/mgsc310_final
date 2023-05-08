@@ -12,11 +12,6 @@ songs <- read.csv("datasets/songs_clean.csv")
 songs %>% glimpse()
 songs %>% is.na %>% sum()
 
-# drop missing values
-songs_clean <- songs %>% drop_na() # drop 1169 rows with missing values
-songs_clean %>% is.na %>% sum()
-songs_clean %>% dim() # still have 19549 observations
-
 # factor binary variables
 songs_clean <- songs_clean %>% mutate(Artist = factor(Artist),
                                       Licensed = as.logical(Licensed),
@@ -51,6 +46,5 @@ RMSE(rf_test, songs_test$ViewsM)
 
 importance(rf_songs)
 
-
-
-explain_forest(rf_songs, interactions=TRUE, data=songs_train)
+# importance plot
+varImpPlot(rf_songs)
