@@ -9,22 +9,6 @@ songs_clean <- read.csv("/Users/Amanda/Library/CloudStorage/OneDrive-ChapmanUniv
 
 songs_clean %>% glimpse()
 
-## POST PRESENTATION EDITS
-songs_clean <- songs_clean %>% 
-  mutate(logDuration = log(Duration_ms),
-         logViewsM = log(ViewsM)) %>% 
-  drop_na()
-
-songs_clean %>% glimpse()
-
-# ggplot(songs_clean, aes(x = logSpeechiness)) + geom_histogram(fill = "#9a0331ff") + 
-#   theme_minimal() + 
-#   labs(y = "Observations", title = "Log speechiness")
-# 
-# ggplot(songs_clean, aes(x = Speechiness)) + geom_histogram(fill = "#9a0331ff") + 
-#   theme_minimal() + 
-#   labs(y = "Observations", title = "Speechiness")
-
 # splitting the data set
 set.seed(310)
 songs_split <- initial_split(songs_clean, prop = 0.8)
@@ -41,6 +25,7 @@ mod1 <- lm(ViewsM ~ Danceability + Energy + Key + Loudness + Speechiness +
 
 summary(mod1)
 
+## POST PRESENTATION EDITS
 # train linear model POST PRESENTATION
 mod1new <- lm(logViewsM ~ Danceability + Energy + Key + Loudness + Speechiness + 
                 Acousticness + Instrumentalness + Liveness + Valence + Tempo + logDuration + 

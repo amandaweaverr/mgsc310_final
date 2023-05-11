@@ -37,8 +37,15 @@ songs_clean <- songs_clean %>%
   left_join(topArtist, by = "Artist") %>% 
   mutate(topArtist = replace_na(topArtist, 0))
 
+songs_clean <- songs_clean %>% 
+  mutate(logDuration = log(Duration_ms),
+         logViewsM = log(ViewsM))
+
 songs_clean %>% glimpse()
 
+write.csv(songs_clean, "/Users/Amanda/Library/CloudStorage/OneDrive-ChapmanUniversity/junior/junior spring/mgsc 310/datasets/songs_clean.csv", row.names=FALSE)
+
+# RANDOM METRICS FOR WRITE UP 
 # portion of observations that have less than 1 billion views
 sum(songs_clean$ViewsM < 1000) / sum(songs_clean$ViewsM > 0)
 
@@ -48,21 +55,14 @@ songs_clean %>% filter(official_video == FALSE) %>% summarize(mean(ViewsM))
 
 # portion of observations where official_video == TRUE
 mean(songs_clean$official_video)
-
-write.csv(songs_clean, "/Users/Amanda/Library/CloudStorage/OneDrive-ChapmanUniversity/junior/junior spring/mgsc 310/datasets/songs_clean.csv", row.names=FALSE)
-
 # correlation matrix of variables
 library(ggcorrplot)
 
+# correlation matrix
 cor_table <- cor(songs_clean %>% select_if(is.numeric))
 cor_table
 
 ggcorrplot(cor_table)
-
-## strong positive correlation between Likes and Views, Comments, & Stream
-## strong negative correlation between Acousticness and Energy & Loudness
-## strong positive correlation between Energy and Loudness
-## Views isn't strongly correlated to anything other tahn Likes, Comments, and Stream
 
 # data visualization
 
@@ -110,17 +110,6 @@ ggplot(songs_clean, aes(x = Key)) + geom_histogram(fill = "#9a0331ff") +
 ggplot(songs_clean, aes(x = official_video, y = ViewsM)) + geom_boxplot(fill = "#9a0331ff") + 
   theme_minimal() + 
   labs(y = "Views (Millions)", x = "Official Video", title = "Official Video")
-
-# ggplot(songs_clean, aes(x = Danceability, y = Views, color = Likes)) + 
-#   geom_point() + 
-#   labs(title = "Danceability vs Views") + 
-#   theme_minimal()
-# 
-# # Energy vs Views
-# ggplot(songs_clean, aes(x = Energy, y = Views, color = Likes)) + 
-#   geom_point() + 
-#   labs(title = "Energy vs Views") + 
-#   theme_minimal()
 
 # distribution of views and likes
 ggplot(songs_clean, aes(x = ViewsM)) + 
