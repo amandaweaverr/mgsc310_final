@@ -25,7 +25,31 @@ songs_clean <- songs_clean %>% mutate(Artist = factor(Artist),
 songs_clean %>% glimpse()
 songs_clean %>% summary()
 
-# write.csv(songs_clean, "/Users/Amanda/Library/CloudStorage/OneDrive-ChapmanUniversity/junior/junior spring/mgsc 310/datasets/songs_clean.csv", row.names=FALSE)
+# make dummy variable for top10 artists
+topArtist <- songs_clean %>% 
+  group_by(Artist) %>% 
+  summarize(ViewsM = n()) %>% 
+  top_frac(0.1) %>% 
+  mutate(topArtist = 1) %>% 
+  select(-ViewsM)
+
+songs_clean <- songs_clean %>% 
+  left_join(topArtist, by = "Artist") %>% 
+  mutate(topArtist = replace_na(topArtist, 0))
+
+songs_clean %>% glimpse()
+
+# portion of observations that have less than 1 billion views
+sum(songs_clean$ViewsM < 1000) / sum(songs_clean$ViewsM > 0)
+
+# effect of official_video on Views
+songs_clean %>% filter(official_video == TRUE) %>% summarize(mean(ViewsM))
+songs_clean %>% filter(official_video == FALSE) %>% summarize(mean(ViewsM))
+
+# portion of observations where official_video == TRUE
+mean(songs_clean$official_video)
+
+write.csv(songs_clean, "/Users/Amanda/Library/CloudStorage/OneDrive-ChapmanUniversity/junior/junior spring/mgsc 310/datasets/songs_clean.csv", row.names=FALSE)
 
 # correlation matrix of variables
 library(ggcorrplot)
@@ -66,6 +90,27 @@ ggplot(songs_clean, aes(x = Duration_ms)) + geom_histogram(fill = "#9a0331ff") +
   theme_minimal() + 
   labs(y = "Observations", x = "Duration (milliseconds)", title = "Duration (milliseconds)")
 
+ggplot(songs_clean, aes(x = Valence)) + geom_histogram(fill = "#9a0331ff") + 
+  theme_minimal() + 
+  labs(y = "Observations", title = "Valence")
+
+ggplot(songs_clean, aes(x = Liveness)) + geom_histogram(fill = "#9a0331ff") + 
+  theme_minimal() + 
+  labs(y = "Observations", title = "Liveness")
+
+ggplot(songs_clean, aes(x = Stream)) + geom_histogram(fill = "#9a0331ff") + 
+  theme_minimal() + 
+  labs(y = "Observations", title = "Streams")
+
+ggplot(songs_clean, aes(x = Key)) + geom_histogram(fill = "#9a0331ff") + 
+  theme_minimal() + 
+  labs(y = "Observations", title = "Key")
+
+
+ggplot(songs_clean, aes(x = official_video, y = ViewsM)) + geom_boxplot(fill = "#9a0331ff") + 
+  theme_minimal() + 
+  labs(y = "Views (Millions)", x = "Official Video", title = "Official Video")
+
 # ggplot(songs_clean, aes(x = Danceability, y = Views, color = Likes)) + 
 #   geom_point() + 
 #   labs(title = "Danceability vs Views") + 
@@ -82,27 +127,6 @@ ggplot(songs_clean, aes(x = ViewsM)) +
   geom_histogram(bins = 20, fill = "#9a0331ff", color = "#9a0331ff") + 
   theme_minimal() + 
   labs(x = "Views (Millions)", y = "Observations", title = "Distribution of Views")
-# 
-# ggplot(songs_clean, aes(x = Likes)) + 
-#   geom_histogram(bins = 20, fill = "light pink", color = "pink") + 
-#   theme_minimal()
-# 
-# # distribution of different predictor variables
-# ggplot(songs_clean, aes(x = Danceability)) + 
-#   geom_histogram(bins = 20, fill = "light pink", color = "pink") + 
-#   theme_minimal()
-# 
-# ggplot(songs_clean, aes(x = Loudness)) + 
-#   geom_histogram(bins = 20, fill = "light pink", color = "pink") + 
-#   theme_minimal()
-# 
-# ggplot(songs_clean, aes(x = Acousticness)) + 
-#   geom_histogram(bins = 20, fill = "light pink", color = "pink") + 
-#   theme_minimal()
-# 
-# ggplot(songs_clean, aes(x = Energy)) + 
-#   geom_histogram(bins = 20, fill = "light pink", color = "pink") + 
-#   theme_minimal()
 
 # me trying to figure out what the outlier is... it's despacito
 songs_popular <- songs_clean %>% arrange(-Views) %>% slice(1:50)

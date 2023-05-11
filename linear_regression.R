@@ -9,6 +9,22 @@ songs_clean <- read.csv("/Users/Amanda/Library/CloudStorage/OneDrive-ChapmanUniv
 
 songs_clean %>% glimpse()
 
+## POST PRESENTATION EDITS
+songs_clean <- songs_clean %>% 
+  mutate(logDuration = log(Duration_ms),
+         logViewsM = log(ViewsM)) %>% 
+  drop_na()
+
+songs_clean %>% glimpse()
+
+# ggplot(songs_clean, aes(x = logSpeechiness)) + geom_histogram(fill = "#9a0331ff") + 
+#   theme_minimal() + 
+#   labs(y = "Observations", title = "Log speechiness")
+# 
+# ggplot(songs_clean, aes(x = Speechiness)) + geom_histogram(fill = "#9a0331ff") + 
+#   theme_minimal() + 
+#   labs(y = "Observations", title = "Speechiness")
+
 # splitting the data set
 set.seed(310)
 songs_split <- initial_split(songs_clean, prop = 0.8)
@@ -17,21 +33,33 @@ songs_test <- testing(songs_split)
 
 dim(songs_split)
 
-# train linear model
+# train linear model ORIGINAL
 mod1 <- lm(ViewsM ~ Danceability + Energy + Key + Loudness + Speechiness + 
-               Acousticness + Instrumentalness + Liveness + Valence + Tempo + Duration_ms + 
+               Acousticness + Instrumentalness + Valence + Tempo + Duration_ms + 
                Licensed + official_video + Stream,
              songs_train)
 
 summary(mod1)
 
-## Significant at a 0.001 level: Danceability Loudness LicensedTRUE
-## At 0.01 level: Energy
-## At 0.05 level: Speechiness official_videoTRUE
-## Not significant: Key Acousticness Instrumentalness Liveness valence Tempo Duration_ms
+# train linear model POST PRESENTATION
+mod1new <- lm(logViewsM ~ Danceability + Energy + Key + Loudness + Speechiness + 
+                Acousticness + Instrumentalness + Liveness + Valence + Tempo + logDuration + 
+                Licensed + official_video + topArtist,
+              songs_train)
 
-# train new model with only significant variables
+summary(mod1new)
+
+# train new model with only ** and *** significant variables ORIGINAL
 mod2 <- lm(ViewsM ~ Danceability + Loudness + Acousticness + Valence + Duration_ms + Licensed + Stream,
            songs_train)
 
 summary(mod2)
+
+# edited linear regression model POST PRESENTATION
+mod2new <- lm(logViewsM ~ Danceability + Energy + Loudness + Speechiness + 
+                Instrumentalness + Tempo + logDuration + Licensed + official_video + topArtist,
+              songs_train)
+
+summary(mod2new)
+
+# THE FIRST MODEL (mod1new) PERFORMED BETTER SO GO WITH THAT ONE
