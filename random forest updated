@@ -56,7 +56,6 @@ rf3_songs <- randomForest(logViewsM ~ Danceability + Energy + Key + Loudness + S
                          data = songs_train,
                          ntree = 200,
                          mtry = 7,
-                         nodesize = 2,
                          importance = TRUE)
 plot(rf3_songs)
 print(rf3_songs)
