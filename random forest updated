@@ -1,0 +1,80 @@
+# import libraries
+library(tidyverse)
+library(rsample)
+library(randomForest)
+library(randomForestExplainer)
+library(ggplot2)
+library(caret)
+
+# import data
+songs <- read.csv("datasets/songs_updated.csv")
+
+# data cleaning and exploring
+songs %>% glimpse()
+
+# 80/20 train-test split
+set.seed(310)
+songs_split <- initial_split(songs, prop = 0.8)
+songs_train <- training(songs_split)
+songs_test <- testing(songs_split)
+
+# new random forest model with updated variables
+rf2_songs <- randomForest(logViewsM ~ Danceability + Energy + Key + Loudness + Speechiness + 
+                Acousticness + Instrumentalness + Liveness + Valence + Tempo + logDuration + 
+                Licensed + official_video + topArtist,
+              data = songs_train,
+              ntree = 500,
+              mtry = 4,
+              importance = TRUE)
+print(rf2_songs)
+plot(rf2_songs)
+
+# performance of the model
+rf2_train <- predict(rf2_songs, newdata = songs_train)
+
+rf2_test <- predict(rf2_songs, newdata = songs_test)
+
+
+# big improvement on train and test data
+RMSE(rf2_train, songs_train$logViewsM)
+RMSE(rf2_test, songs_test$logViewsM)
+
+# variable importance of 2nd model
+importance(rf2_songs)
+
+# variable importance plot 2nd model
+varImpPlot(rf2_songs)
+
+# plot min depth distribution of 2nds model
+plot_min_depth_distribution(rf2_songs)
+
+
+# 3rd model with tuning to check for improvement
+rf3_songs <- randomForest(logViewsM ~ Danceability + Energy + Key + Loudness + Speechiness + 
+                           Acousticness + Instrumentalness + Liveness + Valence + Tempo + logDuration + 
+                           Licensed + official_video + topArtist,
+                         data = songs_train,
+                         ntree = 200,
+                         mtry = 7,
+                         nodesize = 2,
+                         importance = TRUE)
+plot(rf3_songs)
+print(rf3_songs)
+
+# performance of the 3rd model
+rf3_train <- predict(rf3_songs, newdata = songs_train)
+
+rf3_test <- predict(rf3_songs, newdata = songs_test)
+
+# slightly improved train but test was pretty much the same
+RMSE(rf3_train, songs_train$logViewsM)
+RMSE(rf3_test, songs_test$logViewsM)
+
+# variable importance for 3rd model
+importance(rf3_songs)
+
+# variable importance plot of 3rd mdodel
+varImpPlot(rf3_songs)
+
+# plot min depth distribution for 3rd model
+plot_min_depth_distribution(rf3_songs)
