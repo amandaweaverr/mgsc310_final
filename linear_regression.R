@@ -48,3 +48,26 @@ mod2new <- lm(logViewsM ~ Danceability + Energy + Loudness + Speechiness +
 summary(mod2new)
 
 # THE FIRST MODEL (mod1new) PERFORMED BETTER SO GO WITH THAT ONE
+
+library(caret)
+# metrics for mod2
+pred2_train <- predict(mod2, newdata = songs_train)
+pred2_test <- predict(mod2, newdata = songs_test)
+
+(train_rmse_2 <- RMSE(pred2_train, songs_train$ViewsM))
+(test_rmse_2 <- RMSE(pred2_test, songs_test$ViewsM))
+
+
+# metrics for mod1new
+pred_train <- predict(mod1new, newdata = songs_train)
+pred_test <- predict(mod1new, newdata = songs_test)
+
+train_rmse <- RMSE(pred_train, songs_train$logViewsM)
+test_rmse <- RMSE(pred_test, songs_test$logViewsM)
+
+train_rmse
+test_rmse
+
+exp(train_rmse)
+exp(test_rmse)
+
